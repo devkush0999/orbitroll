@@ -73,7 +73,7 @@ create function public.is_admin() returns boolean language sql stable security d
  select exists(select 1 from private.admin_users where user_id = auth.uid());
 $$;
 
-create function public.submit_run(p_id uuid, p_level integer, p_revision integer, p_directions text[]) returns jsonb
+create function public.submit_run(p_id uuid, p_level integer, p_revision integer, p_directions text[], p_owner uuid default auth.uid()) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare
  uid uuid := auth.uid(); lvl public.ranked_levels; existing public.runs;
@@ -82,6 +82,7 @@ declare
  seen integer[] := '{}'; steps integer := 0; gem_count integer; stars integer; points integer;
 begin
  if uid is null then raise exception 'Sign in to submit a run'; end if;
+ if p_owner is distinct from uid then raise exception 'Account changed. Sign in to the original account to upload this run'; end if;
  if exists(select 1 from private.moderation where user_id=uid and excluded) then raise exception 'Ranked play is unavailable for this account'; end if;
  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(uid::text, 0));
  select * into existing from public.runs where id=p_id;
@@ -206,6 +207,6 @@ end;
 $$;
 -- PostgreSQL grants new functions to PUBLIC by default; close that boundary explicitly.
 revoke all on all functions in schema private from public,anon,authenticated;
-revoke all on function public.is_admin(),public.submit_run(uuid,integer,integer,text[]),public.leaderboard(boolean,integer,integer),public.player_card(text),public.my_results(),public.invite_details(text),public.accept_invite(text),public.my_connections(),public.disconnect_player(uuid),public.admin_overview(integer),public.admin_moderate_run(uuid,boolean,text),public.admin_moderate_player(text,boolean,text) from public,anon,authenticated;
+revoke all on function public.is_admin(),public.submit_run(uuid,integer,integer,text[],uuid),public.leaderboard(boolean,integer,integer),public.player_card(text),public.my_results(),public.invite_details(text),public.accept_invite(text),public.my_connections(),public.disconnect_player(uuid),public.admin_overview(integer),public.admin_moderate_run(uuid,boolean,text),public.admin_moderate_player(text,boolean,text) from public,anon,authenticated;
 grant execute on function public.leaderboard(boolean,integer,integer),public.player_card(text),public.invite_details(text) to anon,authenticated;
-grant execute on function public.is_admin(),public.submit_run(uuid,integer,integer,text[]),public.my_results(),public.accept_invite(text),public.my_connections(),public.disconnect_player(uuid),public.admin_overview(integer),public.admin_moderate_run(uuid,boolean,text),public.admin_moderate_player(text,boolean,text) to authenticated;
+grant execute on function public.is_admin(),public.submit_run(uuid,integer,integer,text[],uuid),public.my_results(),public.accept_invite(text),public.my_connections(),public.disconnect_player(uuid),public.admin_overview(integer),public.admin_moderate_run(uuid,boolean,text),public.admin_moderate_player(text,boolean,text) to authenticated;

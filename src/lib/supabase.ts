@@ -3,12 +3,14 @@ import { createClient, processLock } from '@supabase/supabase-js';
 import { authStorage } from './authStorage';
 import type { Database } from './database.types';
 import { Platform } from 'react-native';
+import { timedFetch } from './network';
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim();
 const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
 export const supabase =
   url && key
     ? createClient<Database>(url, key, {
+        global: { fetch: timedFetch },
         auth: {
           storage: authStorage,
           autoRefreshToken: true,

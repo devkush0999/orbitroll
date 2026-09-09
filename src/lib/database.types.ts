@@ -31,6 +31,7 @@ export type Database = {
           p_level: number;
           p_revision: number;
           p_directions: string[];
+          p_owner: string;
         },
         RunReceipt
       >;

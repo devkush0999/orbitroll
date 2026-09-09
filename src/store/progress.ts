@@ -1,7 +1,7 @@
 import { levels } from '../features/game/levels';
 import type { SpaceTheme } from '../theme/tokens';
 
-export type Result = { stars: number; moves: number; seconds: number };
+export type Result = { stars: number; moves: number; seconds: number | null };
 export type Progress = {
   results: Record<number, Result>;
   theme: SpaceTheme;
@@ -39,9 +39,9 @@ export function parseProgress(raw: string): Progress {
         continue;
       const record = result as Record<string, unknown>;
       if (
-        [record.stars, record.moves, record.seconds].every(
+        [record.stars, record.moves].every(
           (n) => typeof n === 'number' && Number.isFinite(n) && n >= 0,
-        ) &&
+        ) && (record.seconds === null || (typeof record.seconds === 'number' && Number.isFinite(record.seconds) && record.seconds >= 0)) &&
         Number(record.stars) >= 1 &&
         Number(record.stars) <= 3 &&
         Number.isInteger(record.stars)
@@ -49,7 +49,7 @@ export function parseProgress(raw: string): Progress {
         results[Number(id)] = {
           stars: Number(record.stars),
           moves: Number(record.moves),
-          seconds: Number(record.seconds),
+          seconds: record.seconds === null ? null : Number(record.seconds),
         };
       }
     }
