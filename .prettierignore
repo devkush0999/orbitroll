@@ -1,0 +1,5 @@
+node_modules
+dist
+.expo
+package-lock.json
+assets/animations
