@@ -70,6 +70,12 @@ export default function HomeScreen() {
           router.push({ pathname: '/play/[id]', params: { id: next.id } })
         }
       />
+      <Button
+        title="Rankings & your crew"
+        secondary
+        icon="people-outline"
+        onPress={() => router.push('/leaderboard')}
+      />
       <View style={s.links}>
         <Pressable
           accessibilityRole="button"

@@ -79,23 +79,25 @@ export default function RootLayout() {
               }
             />
           ) : (
-            <CommunityProvider><Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: colors.background },
-                animation: 'fade',
-              }}
-            >
-              <Stack.Screen name="index" />
-              <Stack.Screen name="levels" />
-              <Stack.Screen name="settings" />
-              <Stack.Screen name="onboarding" />
-              <Stack.Screen name="how-to-play" />
-              <Stack.Screen
-                name="play/[id]"
-                options={{ gestureEnabled: false }}
-              />
-            </Stack></CommunityProvider>
+            <CommunityProvider>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: { backgroundColor: colors.background },
+                  animation: 'fade',
+                }}
+              >
+                <Stack.Screen name="index" />
+                <Stack.Screen name="levels" />
+                <Stack.Screen name="settings" />
+                <Stack.Screen name="onboarding" />
+                <Stack.Screen name="how-to-play" />
+                <Stack.Screen
+                  name="play/[id]"
+                  options={{ gestureEnabled: false }}
+                />
+              </Stack>
+            </CommunityProvider>
           )}
         </Provider>
       </SafeAreaProvider>

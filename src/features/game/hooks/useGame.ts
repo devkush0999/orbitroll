@@ -130,7 +130,12 @@ export function useGame(
             seconds: secondsRef.current,
           }),
         );
-      if (next.status === 'won' && recordProgress && runOwner.current && runOwner.current === session?.user.id)
+      if (
+        next.status === 'won' &&
+        recordProgress &&
+        runOwner.current &&
+        runOwner.current === session?.user.id
+      )
         void recordRun(runOwner.current, level.id, [...trace.current]);
       if (preferences.haptics) {
         const feedback =
@@ -146,7 +151,16 @@ export function useGame(
         void feedback.catch(() => {});
       }
     },
-    [commit, dispatch, level, preferences.haptics, stopClock, recordProgress, recordRun, session?.user.id],
+    [
+      commit,
+      dispatch,
+      level,
+      preferences.haptics,
+      stopClock,
+      recordProgress,
+      recordRun,
+      session?.user.id,
+    ],
   );
   const move = useCallback(
     (direction: Direction) => {

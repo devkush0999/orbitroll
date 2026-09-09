@@ -87,7 +87,7 @@ begin
  select * into existing from public.runs where id=p_id;
  if found then
    if existing.user_id <> uid then raise exception 'Request ID already used'; end if;
-   if existing.level_id <> p_level or existing.revision <> p_revision or existing.directions <> p_directions then raise exception 'Retry payload changed'; end if;
+   if existing.level_id is distinct from p_level or existing.revision is distinct from p_revision or existing.directions is distinct from p_directions then raise exception 'Retry payload changed'; end if;
    return jsonb_build_object('id',existing.id,'points',existing.points,'stars',existing.stars,'moves',existing.moves,'crystals',existing.crystals);
  end if;
  if p_id is null or p_directions is null or cardinality(p_directions) not between 1 and 512 or array_ndims(p_directions) <> 1 then raise exception 'Invalid move sequence'; end if;

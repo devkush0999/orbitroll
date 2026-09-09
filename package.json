@@ -10,10 +10,12 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "tsx --test src/features/game/engine.test.ts src/features/game/input.test.ts src/features/guide/lessons.test.ts src/store/progress.test.ts",
+    "test": "tsx --test src/features/game/engine.test.ts src/features/game/input.test.ts src/features/guide/lessons.test.ts src/store/progress.test.ts src/features/community/validation.test.ts",
     "check": "npm run typecheck && npm run lint && npm test",
     "export:web": "expo export --platform web",
-    "postinstall": "node scripts/copy-canvaskit.mjs"
+    "postinstall": "node scripts/copy-canvaskit.mjs",
+    "test:database": "node --import tsx scripts/test-supabase.ts",
+    "check:ranked-levels": "node --import tsx scripts/generate-ranked-levels.ts --check"
   },
   "dependencies": {
     "@expo-google-fonts/space-grotesk": "^0.4.1",

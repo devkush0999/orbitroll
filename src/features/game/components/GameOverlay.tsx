@@ -6,6 +6,10 @@ import { RewardStars } from './RewardStars';
 import { colors, fonts } from '@/theme/tokens';
 import type { GameStatus, Level } from '../types';
 import celebration from '../../../../assets/animations/celebration.json';
+import { useCommunity } from '@/features/community/CommunityProvider';
+import { sharePlayerLink } from '@/features/community/share';
+import { useTask, Notice } from '@/features/community/components';
+import { useState } from 'react';
 type Props = {
   status: GameStatus;
   moves: number;
@@ -21,6 +25,9 @@ type Props = {
   onNext: () => void;
 };
 export function GameOverlay(props: Props) {
+  const { profile, session, notice } = useCommunity();
+  const task = useTask();
+  const [shareNotice, setShareNotice] = useState('');
   const won = props.status === 'won',
     paused = props.status === 'paused';
   return (
@@ -114,6 +121,17 @@ export function GameOverlay(props: Props) {
                 <Text style={s.body}>{props.nextLevel.description}</Text>
               </View>
             )}
+            {won && props.level.id > 0 && (
+              <>
+                <Text accessibilityLiveRegion="polite" style={s.body}>
+                  {session
+                    ? notice || 'Ranked runs sync from your pilot profile.'
+                    : 'Saved on this device. Sign in before your next run to join the rankings.'}
+                </Text>
+                <Notice message={shareNotice} />
+                <Notice message={task.error} error />
+              </>
+            )}
             <View style={{ alignSelf: 'stretch', gap: 12, marginTop: 8 }}>
               <Button
                 title={
@@ -136,6 +154,24 @@ export function GameOverlay(props: Props) {
                   onPress={props.onRestart}
                   secondary
                   icon="refresh"
+                />
+              )}
+              {won && profile?.is_public && props.level.id > 0 && (
+                <Button
+                  title="Share my player card"
+                  icon="share-outline"
+                  secondary
+                  disabled={task.busy}
+                  onPress={() =>
+                    void task.run(async () =>
+                      setShareNotice(
+                        await sharePlayerLink(
+                          `I finished ${props.level.name} with ${props.stars} stars on Orbit Roll.`,
+                          `/player/${profile.username}`,
+                        ),
+                      ),
+                    )
+                  }
                 />
               )}
               {paused && (

@@ -54,7 +54,12 @@ const slice = createSlice({
     resetProgress: (state) => {
       state.results = {};
     },
-    mergeCloudResults: (state, { payload }: PayloadAction<{ level_id: number; stars: number; moves: number }[]>) => {
+    mergeCloudResults: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{ level_id: number; stars: number; moves: number }[]>,
+    ) => {
       for (const result of payload) {
         const old = state.results[result.level_id];
         state.results[result.level_id] = {
@@ -150,14 +155,18 @@ export async function switchProgressOwner(userId: string | null) {
     if (version !== scopeVersion) return;
     const results = raw ? parseProgress(raw).results : {};
     activeKey = destination;
-    store.dispatch(slice.actions.hydrate({ ...store.getState().progress, results }));
+    store.dispatch(
+      slice.actions.hydrate({ ...store.getState().progress, results }),
+    );
     lastProgress = store.getState().progress;
     hydrated = true;
     store.dispatch(persistence.actions.setStatus('saved'));
   } catch (error) {
     if (version !== scopeVersion) return;
     activeKey = destination;
-    store.dispatch(slice.actions.hydrate({ ...store.getState().progress, results: {} }));
+    store.dispatch(
+      slice.actions.hydrate({ ...store.getState().progress, results: {} }),
+    );
     lastProgress = store.getState().progress;
     hydrated = true;
     store.dispatch(persistence.actions.setStatus('error'));

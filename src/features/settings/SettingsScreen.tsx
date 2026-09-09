@@ -254,8 +254,14 @@ export default function SettingsScreen() {
       </SettingsSection>
       <SettingsSection title="YOUR DATA">
         <SettingRow
+          title="Pilot profile & cloud saves"
+          detail="Sign in, manage public visibility, and invite your crew."
+          icon="person-outline"
+          onPress={() => router.push('/account')}
+        />
+        <SettingRow
           title="Reset journey"
-          detail="Permanently clear completed levels, stars, and records."
+          detail="Clear records on this device. Verified cloud records remain."
           icon="trash-outline"
           danger
           onPress={() => setDialog('journey')}
@@ -297,16 +303,16 @@ export default function SettingsScreen() {
               />
               <Text accessibilityRole="header" style={s.dialogTitle}>
                 {dialog === 'privacy'
-                  ? 'Your journey stays with you.'
+                  ? 'Your data, your choice.'
                   : dialog === 'journey'
                     ? 'Start a new journey?'
                     : 'Restore your settings?'}
               </Text>
               <Text style={s.body}>
                 {dialog === 'privacy'
-                  ? 'Orbit Roll stores level records, stars, preferences, and tutorial completion locally on this device. This version has no account, advertising, analytics, or cloud sync. Reset journey clears game records; settings remain. Clearing app data removes all local saves. Device or browser backups are managed by your operating system.'
+                  ? 'Guest records and preferences stay on this device. Signed-in runs sync to Supabase for replay validation and cross-device progress. Profiles start private; public visibility and invitations are your choice. Your email is never shown on rankings. Read Privacy & data for details.'
                   : dialog === 'journey'
-                    ? 'All completed levels, earned stars, and best records will be cleared. This cannot be undone. Your preferences will stay.'
+                    ? 'Local completed levels, stars, and best records will be cleared. Your preferences and verified cloud records remain. Cloud progress can return at the next sync.'
                     : 'Theme, controls, hints, haptics, and display preferences will return to their defaults. Your journey will stay.'}
               </Text>
               {dialog !== 'privacy' && (
@@ -329,6 +335,16 @@ export default function SettingsScreen() {
                         : 'Default settings restored.',
                     );
                     close();
+                  }}
+                />
+              )}
+              {dialog === 'privacy' && (
+                <Button
+                  title="Read Privacy & data"
+                  secondary
+                  onPress={() => {
+                    close();
+                    router.push('/privacy');
                   }}
                 />
               )}
