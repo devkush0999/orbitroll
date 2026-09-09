@@ -1,6 +1,6 @@
 # Independent codebases and domains
 
-The standalone admin has a live private preview at https://orbit-roll-admin.greensturn.chatgpt.site. Its custom hostname has been registered with the current host and awaits the [exact GoDaddy verification records](GODADDY-DNS.md). The Cloudflare Pages instructions below are the separate free-hosting option, not a claim that a Pages project was created.
+The standalone admin has a live private preview at https://orbit-roll-admin.greensturn.chatgpt.site. Its custom hostname has been registered with the current host and awaits the [exact Hostinger verification records](HOSTINGER-DNS.md). The Cloudflare Pages instructions below are the separate free-hosting option, not a claim that a Pages project was created.
 
 ```text
 Desktop/
@@ -17,20 +17,20 @@ The admin has its own package.json, lockfile, environment, TypeScript config, CI
 | Player website / share links | `orbitroll.deveshkumarsingh.com` | `space-cube`: `npm ci`, `npm run export:web`, output `dist` |
 | Admin | `admin-orbitroll.deveshkumarsingh.com` | `orbit-roll-admin`: `npm ci`, `npm run build`, output `out` |
 
-These are proposed names, not a claim that DNS or HTTPS is active. Apex websites and mail records stay untouched. The two frontends can be hosted on separate Cloudflare Pages Free projects; GoDaddy can stay the registrar and DNS provider when using subdomains.
+These are proposed names, not a claim that DNS or HTTPS is active. Apex websites and mail records stay untouched. The two frontends can be hosted on separate Cloudflare Pages Free projects; Hostinger remains the domain registrar. Use its DNS editor if the domain uses Hostinger nameservers; otherwise, add records at the current authoritative DNS provider.
 
-## GoDaddy + Cloudflare Pages
+## Hostinger + Cloudflare Pages
 
 1. Deploy each repository to its own Pages project. Enter only its public Supabase URL and publishable key in build environment variables. Do not set `ADMIN_BASE_PATH`; admin serves at its own domain root.
 2. Add the intended hostname under **Custom domains** on the corresponding Pages project **before** editing DNS. Use the exact target returned by that project, not a guessed project name.
-3. In GoDaddy DNS, add the requested CNAME record for each unused subdomain:
+3. In Hostinger hPanel → **Domains → DNS → deveshkumarsingh.com**, add the requested CNAME record for each unused subdomain:
 
-| Type | GoDaddy Name | Value |
+| Type | Hostinger Name | Value |
 | --- | --- | --- |
 | CNAME | `orbitroll` | Actual player-site Pages hostname returned by Cloudflare |
 | CNAME | `admin-orbitroll` | Actual admin Pages hostname returned by Cloudflare |
 
-Do not include `https://`, paths, or the whole zone name in GoDaddy's Name field. Use the default TTL. If the hostname already has a record, review its purpose before replacing it. Add any extra provider-supplied validation records exactly. Do not change nameservers, apex A records, MX, or existing TXT records for this setup.
+Do not include `https://`, paths, or the whole zone name in Hostinger's Name field. Use the default TTL. If the hostname already has a record, review its purpose before replacing it. Add any extra provider-supplied validation records exactly. Do not change nameservers, apex A records, MX, or existing TXT records for this setup.
 
 4. Wait for each provider's DNS validation and TLS certificate to show active. Test both HTTPS roots and a direct player/share route.
 5. Only then switch live client URLs and rebuild:
@@ -45,7 +45,7 @@ The actual preview URLs remain configured until custom domains work. Native univ
 
 6. Set Supabase Auth Site URL to the player website. Add exact origins to any configured auth redirect allowlist. Set the media function's `ADMIN_ORIGINS` to `https://admin-orbitroll.deveshkumarsingh.com` (optionally keep `http://localhost:3000` for development). Origins have no path or trailing slash.
 
-Cloudflare source: [Custom domains on Pages](https://developers.cloudflare.com/pages/configuration/custom-domains/). GoDaddy source: [Add a CNAME record](https://www.godaddy.com/help/add-a-cname-record-19236).
+Cloudflare source: [Custom domains on Pages](https://developers.cloudflare.com/pages/configuration/custom-domains/). Hostinger source: [Manage DNS records](https://www.hostinger.com/support/1583249-how-to-manage-dns-records-at-hostinger/).
 
 ## Cloudinary credentials
 
