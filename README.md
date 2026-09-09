@@ -55,7 +55,7 @@ Settings contains live theme previews, progress totals, fullscreen/control prefe
 
 ## Expo app, Next.js admin, Supabase, and Cloudinary
 
-The player app stays in `src/`. A separate **Next.js** admin lives in `apps/admin/`, with its own dependencies and build. Supabase owns all backend authorization and data. Cloudinary stores optional artwork and short videos, signed through a Supabase Edge Function. See [admin and free-tier setup](apps/admin/README.md). Run `npm ci --prefix apps/admin` and `npm run admin:dev` to open the admin locally.
+This repository contains the Expo mobile app and player website. The independent **Next.js** admin is in the sibling `../orbit-roll-admin` project, with its own package.json, lockfile, source, and CI. Neither build imports the other. Supabase migrations and Edge Functions remain here as the backend source of truth. See [domains and deployment](docs/DEPLOYMENT.md) for independent hosting and [Supabase setup](supabase/README.md) for backend configuration.
 
 ## Online profiles, rankings, invitations, and admin
 
@@ -80,7 +80,6 @@ src/features/game/
   visibility.ts            Local path visibility and camera framing
   hooks/useGame.ts         Input locking, lifecycle, clock, animation coordination
   components/              Skia board, controls, Lottie completion overlay
-apps/admin/                Separate Next.js admin (static export)
 shared/                    Typed media contract and bounded CDN URL helpers
 supabase/functions/        Cloudinary signed uploads and provider verification
 src/features/community/    Auth, profiles, rankings, invites, media, upload queue

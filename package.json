@@ -16,11 +16,7 @@
     "postinstall": "node scripts/copy-canvaskit.mjs",
     "test:database": "node --import tsx scripts/test-supabase.ts",
     "check:ranked-levels": "node --import tsx scripts/generate-ranked-levels.ts --check",
-    "verify:backend": "node --env-file-if-exists=.env scripts/verify-backend.mjs",
-    "admin:dev": "npm --prefix apps/admin run dev",
-    "admin:build": "npm --prefix apps/admin run build",
-    "admin:check": "npm --prefix apps/admin run typecheck && npm --prefix apps/admin run lint",
-    "export:site": "npm run export:web && ADMIN_BASE_PATH=/admin npm --prefix apps/admin run build && node scripts/merge-admin-export.mjs"
+    "verify:backend": "node --env-file-if-exists=.env scripts/verify-backend.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/space-grotesk": "^0.4.1",

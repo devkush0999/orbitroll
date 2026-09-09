@@ -1,6 +1,6 @@
 # Orbit Roll online setup
 
-The Expo app/player website and separate Next.js admin share one Supabase backend. See [Next.js and Cloudinary setup](../apps/admin/README.md) for the admin and media workflow. The game still works without online configuration. No project is created or schema applied by opening the app.
+The Expo app/player website and separate Next.js admin share one Supabase backend. See the sibling Next.js project README (`../orbit-roll-admin/README.md`) for the admin and media workflow. The game still works without online configuration. No project is created or schema applied by opening the app.
 
 ## 1. Configure a Supabase project
 
