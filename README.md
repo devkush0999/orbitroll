@@ -53,9 +53,13 @@ The `/how-to-play` route is available from Home and Settings. Four practice less
 
 Settings contains live theme previews, progress totals, fullscreen/control preferences, swipe distance, hints, haptics, reduced motion, a local-data explanation, and separately confirmed resets for preferences and journey records. Restoring preferences preserves records and tutorial completion. Preferences are validated when loading older saves; serial writes expose saving/error status with retry. Supabase accounts, ranked cloud saves, public player cards, invitations, and a role-protected admin panel are now available when configured. Read [online setup](supabase/README.md) before enabling them.
 
+## Expo app, Next.js admin, Supabase, and Cloudinary
+
+The player app stays in `src/`. A separate **Next.js** admin lives in `apps/admin/`, with its own dependencies and build. Supabase owns all backend authorization and data. Cloudinary stores optional artwork and short videos, signed through a Supabase Edge Function. See [admin and free-tier setup](apps/admin/README.md). Run `npm ci --prefix apps/admin` and `npm run admin:dev` to open the admin locally.
+
 ## Online profiles, rankings, invitations, and admin
 
-See [Supabase setup and deployment](supabase/README.md) for migrations, email-code templates, environment variables, first-admin provisioning, database integration tests, and launch requirements. Web has a dedicated responsive landing page; native Home retains the next-trail experience. `/account`, `/leaderboard`, `/player/:username`, `/invite/:code`, `/admin`, and `/privacy` share the same typed Expo routes on all platforms.
+See [Supabase setup and deployment](supabase/README.md) for migrations, email-code templates, environment variables, first-admin provisioning, database integration tests, and launch requirements. Web has a dedicated responsive landing page; native Home retains the next-trail experience. `/account`, `/leaderboard`, `/player/:username`, `/invite/:code`, `/media`, and `/privacy` are Expo routes. The legacy Expo `/admin` route now opens the separate Next.js admin configured by `EXPO_PUBLIC_ADMIN_URL`.
 
 ## Structure
 
@@ -76,7 +80,10 @@ src/features/game/
   visibility.ts            Local path visibility and camera framing
   hooks/useGame.ts         Input locking, lifecycle, clock, animation coordination
   components/              Skia board, controls, Lottie completion overlay
-src/features/community/    Auth, profiles, rankings, invites, admin, upload queue
+apps/admin/                Separate Next.js admin (static export)
+shared/                    Typed media contract and bounded CDN URL helpers
+supabase/functions/        Cloudinary signed uploads and provider verification
+src/features/community/    Auth, profiles, rankings, invites, media, upload queue
 src/lib/                   Typed Supabase client and native secure session storage
 supabase/migrations/       RLS, replay validation, ranked level definitions
 src/store/                 Redux Toolkit and account-scoped local persistence

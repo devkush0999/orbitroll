@@ -1,6 +1,6 @@
 # Orbit Roll online setup
 
-The app, website, and admin panel share Expo Router and one Supabase backend. The game still works without online configuration. No project is created or schema applied by opening the app.
+The Expo app/player website and separate Next.js admin share one Supabase backend. See [Next.js and Cloudinary setup](../apps/admin/README.md) for the admin and media workflow. The game still works without online configuration. No project is created or schema applied by opening the app.
 
 ## 1. Configure a Supabase project
 
@@ -22,6 +22,7 @@ Review and run these files in order using Supabase SQL Editor, or your authentic
 
 1. `migrations/202609090001_community.sql`: profiles, RLS, replay validation, rankings, connections, admin roles, audit history.
 2. `migrations/202609090002_ranked_levels.sql`: all 18 revision-1 trails.
+3. `migrations/202609090003_media.sql`: media metadata, admin upload budgets, service-only verification, and publication policies.
 
 For CLI-managed projects:
 
@@ -68,7 +69,8 @@ Refresh the account screen and open `/admin`. Verify exactly the intended user w
 | `/leaderboard` | Paginated global rankings, crew rankings, connections/disconnect |
 | `/player/:username` | Shareable public score card; private cards return no data |
 | `/invite/:code` | Unlisted invitation preview and explicit acceptance |
-| `/admin` | Role-protected run/player moderation with required reasons and audit history |
+| `/admin` in Expo | Shortcut to the separate Next.js admin URL |
+| `/media` | Published Cloudinary artwork and tap-to-play clips |
 | `/privacy` | Explanation of local, account, ranked, and public data |
 
 Public profiles are opt-in. Email addresses and invitation codes never appear on rankings/player cards. Invitation links reveal the inviter's name even when their ranking is private. Accepting creates a mutual connection; either person can disconnect. Shared HTTPS links open the website. Native universal/app links require the final domain's association files and app configuration; they are not yet configured.

@@ -6,6 +6,11 @@ coverage/
 .DS_Store
 .env*.local
 .env
+**/.env
+**/.next/
+**/out/
+**/next-env.d.ts
+*.tsbuildinfo
 ios/
 android/
 public/canvaskit.wasm

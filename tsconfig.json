@@ -6,5 +6,6 @@
     "noUncheckedIndexedAccess": true,
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "shared/**/*.ts", "scripts/**/*.ts", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["apps", "supabase/functions", "node_modules"]
 }

@@ -10,13 +10,17 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "tsx --test src/features/game/engine.test.ts src/features/game/input.test.ts src/features/guide/lessons.test.ts src/store/progress.test.ts src/features/community/validation.test.ts",
+    "test": "tsx --test src/features/game/engine.test.ts src/features/game/input.test.ts src/features/guide/lessons.test.ts src/store/progress.test.ts src/features/community/validation.test.ts shared/media.test.ts",
     "check": "npm run typecheck && npm run lint && npm test",
     "export:web": "expo export --platform web",
     "postinstall": "node scripts/copy-canvaskit.mjs",
     "test:database": "node --import tsx scripts/test-supabase.ts",
     "check:ranked-levels": "node --import tsx scripts/generate-ranked-levels.ts --check",
-    "verify:backend": "node --env-file-if-exists=.env scripts/verify-backend.mjs"
+    "verify:backend": "node --env-file-if-exists=.env scripts/verify-backend.mjs",
+    "admin:dev": "npm --prefix apps/admin run dev",
+    "admin:build": "npm --prefix apps/admin run build",
+    "admin:check": "npm --prefix apps/admin run typecheck && npm --prefix apps/admin run lint",
+    "export:site": "npm run export:web && ADMIN_BASE_PATH=/admin npm --prefix apps/admin run build && node scripts/merge-admin-export.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/space-grotesk": "^0.4.1",
@@ -40,6 +44,7 @@
     "expo-secure-store": "~57.0.3",
     "expo-splash-screen": "~57.0.8",
     "expo-status-bar": "~57.0.1",
+    "expo-video": "~57.0.3",
     "lottie-react-native": "~7.3.8",
     "react": "19.2.3",
     "react-dom": "19.2.3",

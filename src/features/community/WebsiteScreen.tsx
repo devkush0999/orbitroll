@@ -97,7 +97,7 @@ export default function WebsiteScreen() {
           </View>
         ))}
       </View>
-      <View style={c.card}>
+    <View style={c.card}>
         <Text style={c.heading}>First time outside the atmosphere?</Text>
         <Text style={c.body}>
           A few short practice trails teach you to roll, lift, and land. No
@@ -109,6 +109,7 @@ export default function WebsiteScreen() {
           icon="book-outline"
           onPress={() => router.push('/how-to-play')}
         />
+        <Button secondary title="Artwork & clips from the crew" icon="images-outline" onPress={() => router.push('/media')} />
       </View>
       <View style={[c.row, { flexWrap: 'wrap' }]}>
         <Text style={c.body}>Orbit Roll · Made for a moment of wonder.</Text>

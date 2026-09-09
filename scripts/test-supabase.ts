@@ -27,6 +27,7 @@ const fails = (statement: string, pattern: string) =>
 let sql = `begin;
 create role anon nologin;
 create role authenticated nologin;
+create role service_role nologin;
 create schema auth;
 create table auth.users(id uuid primary key);
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
@@ -224,6 +225,56 @@ sql += check(
 sql += check(
   `jsonb_array_length(public.admin_overview()->'audit')=4`,
   'Missing audit entries',
+);
+sql += `select set_config('request.jwt.claim.sub','${b}',true);`;
+sql += fails(
+  `select public.admin_reserve_media('image','Untrusted upload')`,
+  'Admin access required',
+);
+sql += fails(
+  `select public.service_finalize_media(gen_random_uuid(),'${admin}','https://res.cloudinary.com/demo/a',100,100,100,null,'jpg')`,
+  'permission denied',
+);
+sql += `select set_config('request.jwt.claim.sub','${admin}',true); select set_config('test.media_ticket',public.admin_reserve_media('image','First artwork')->>'id',true);`;
+sql += check(
+  `public.admin_media_ticket(current_setting('test.media_ticket')::uuid)->>'title'='First artwork'`,
+  'Upload reservation failed',
+);
+sql += `reset role; set local role service_role; select public.service_finalize_media(current_setting('test.media_ticket')::uuid,'${admin}','https://res.cloudinary.com/demo/image/upload/v1/test.jpg',1024,640,360,null,'jpg'); reset role; set local role anon;`;
+sql += check(
+  '(select count(*) from public.media_assets)=0',
+  'Draft media leaked publicly',
+);
+sql += `reset role; set local role authenticated; select set_config('request.jwt.claim.sub','${admin}',true);`;
+sql += check(
+  '(select count(*) from public.admin_media_library())=1',
+  'Admin library missing draft',
+);
+sql += fails(
+  `select public.admin_publish_media(current_setting('test.media_ticket')::uuid,true,'bad')`,
+  'Give a reason',
+);
+sql += `select public.admin_publish_media(current_setting('test.media_ticket')::uuid,true,'Approved artwork'); reset role; set local role anon;`;
+sql += check(
+  '(select count(*) from public.media_assets)=1',
+  'Published media unavailable',
+);
+sql += `reset role; set local role authenticated; select set_config('request.jwt.claim.sub','${b}',true);`;
+sql += fails(
+  `select public.admin_publish_media(current_setting('test.media_ticket')::uuid,false,'Unauthorized change')`,
+  'Admin access required',
+);
+sql += `select set_config('request.jwt.claim.sub','${admin}',true); select public.admin_publish_media(current_setting('test.media_ticket')::uuid,false,'Return to draft');`;
+for (let i = 0; i < 4; i++)
+  sql += `select public.admin_reserve_media('image','Budget test');`;
+sql += fails(
+  `select public.admin_reserve_media('image','Over budget')`,
+  'Hourly upload limit',
+);
+sql += `reset role; set local role anon;`;
+sql += check(
+  '(select count(*) from public.media_assets)=0',
+  'Unpublished media still listed',
 );
 sql += `rollback;`;
 try {

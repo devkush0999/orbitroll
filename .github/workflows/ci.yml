@@ -26,11 +26,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm ci --prefix apps/admin
       - run: npm run check
       - run: npm run check:ranked-levels
+      - run: npm run admin:check
       - run: npm run test:database
         env:
           ORBIT_TEST_DB_USER: postgres
           PGPASSWORD: orbit-test-only
       - run: npx expo install --check
       - run: npx expo export --platform all
+      - run: npm run admin:build

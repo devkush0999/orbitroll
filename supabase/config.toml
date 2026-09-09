@@ -1,0 +1,4 @@
+project_id = "orbit-roll"
+
+[functions.cloudinary-media]
+verify_jwt = true

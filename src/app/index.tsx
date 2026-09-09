@@ -76,6 +76,12 @@ export default function HomeScreen() {
         icon="people-outline"
         onPress={() => router.push('/leaderboard')}
       />
+      <Button
+        title="From the crew · media"
+        secondary
+        icon="images-outline"
+        onPress={() => router.push('/media')}
+      />
       <View style={s.links}>
         <Pressable
           accessibilityRole="button"

@@ -29,6 +29,10 @@ export default function PrivacyScreen() {
           'Authorized administrators can review run records, hide runs, and exclude accounts from rankings and new connections. Actions and their reasons are recorded for review.',
         ],
         [
+          'Optional media',
+          'Published artwork and video clips are delivered by Cloudinary. Opening the media gallery requests images from its CDN; clips load when you choose to play. These requests disclose connection information such as your IP address to the media provider. Core gameplay assets remain bundled with the game.',
+        ],
+        [
           'Managing your data',
           'You can edit your profile, turn off public visibility, remove queued uploads, and disconnect from your crew in the app. Reset journey only clears local records; verified cloud records may return at the next sync. Contact the game operator for account and cloud-data deletion until self-service deletion is configured.',
         ],

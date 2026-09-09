@@ -7,12 +7,19 @@ import type {
   RankedPlayer,
   RunReceipt,
 } from '../features/community/types';
+import type { MediaAsset } from '../../shared/media';
 type Rpc<A, R> = { Args: A; Returns: R };
 // Contract for the checked-in migrations. Regenerate against the project when
 // adding schema changes (see supabase/README.md).
 export type Database = {
   public: {
     Tables: {
+      media_assets: {
+        Row: MediaAsset;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
       profiles: {
         Row: Profile;
         Insert: never;
@@ -24,6 +31,11 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      admin_media_library: Rpc<{ p_offset?: number }, MediaAsset[]>;
+      admin_publish_media: Rpc<
+        { p_id: string; p_published: boolean; p_reason: string },
+        undefined
+      >;
       is_admin: Rpc<Record<string, never>, boolean>;
       submit_run: Rpc<
         {
