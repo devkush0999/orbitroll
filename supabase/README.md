@@ -14,6 +14,8 @@ EXPO_PUBLIC_SITE_URL=https://YOUR_PUBLIC_WEBSITE_DOMAIN
 
 Use the project URL and publishable key from the Supabase dashboard. These values are compiled into the client. Never use a secret/service-role key, database password, or management token in `EXPO_PUBLIC_*`. `.env` is ignored by Git. Restart Metro after changing configuration; rebuild website/native bundles to update compiled values.
 
+After applying migrations, run `npm run verify:backend` for a read-only live check of the public ranking endpoint and anonymous access restrictions. A `PGRST202` response means the ranking function is missing from the deployed API schema.
+
 ## 2. Apply migrations
 
 Review and run these files in order using Supabase SQL Editor, or your authenticated Supabase CLI migration workflow:

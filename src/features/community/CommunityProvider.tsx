@@ -7,7 +7,7 @@ import {
   useState,
   type PropsWithChildren,
 } from 'react';
-import { AppState, Platform } from 'react-native';
+import { AppState, Modal, Platform, View } from 'react-native';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { mergeCloudResults, store, switchProgressOwner } from '@/store';
@@ -17,6 +17,7 @@ import type { Profile } from './types';
 import type { Direction } from '../game/types';
 
 type Community = {
+  ready: boolean;
   session: Session | null;
   profile: Profile | null;
   isAdmin: boolean;
@@ -39,6 +40,7 @@ export function CommunityProvider({ children }: PropsWithChildren) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setAdmin] = useState(false);
   const [ready, setReady] = useState(!supabase);
+  const [booted, setBooted] = useState(!supabase);
   const [notice, setNotice] = useState('');
   const owner = useRef<string | null>(null);
   const sequence = useRef(0);
@@ -101,6 +103,7 @@ export function CommunityProvider({ children }: PropsWithChildren) {
       }
       if (!alive || token !== sequence.current) return;
       setReady(true);
+      setBooted(true);
       if (user) {
         void refresh();
         void sync(user);
@@ -163,10 +166,19 @@ export function CommunityProvider({ children }: PropsWithChildren) {
   );
   return (
     <Context.Provider
-      value={{ session, profile, isAdmin, notice, refresh, recordRun }}
+      value={{ ready, session, profile, isAdmin, notice, refresh, recordRun }}
     >
-      {ready ? (
-        children
+      {booted ? (
+        <View style={{ flex: 1 }}>
+          {children}
+          <Modal
+            visible={!ready}
+            animationType="none"
+            onRequestClose={() => {}}
+          >
+            <LoadingScreen message="Opening your pilot profile…" />
+          </Modal>
+        </View>
       ) : (
         <LoadingScreen message="Opening your pilot profile…" />
       )}

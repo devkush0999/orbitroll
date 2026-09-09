@@ -15,7 +15,8 @@
     "export:web": "expo export --platform web",
     "postinstall": "node scripts/copy-canvaskit.mjs",
     "test:database": "node --import tsx scripts/test-supabase.ts",
-    "check:ranked-levels": "node --import tsx scripts/generate-ranked-levels.ts --check"
+    "check:ranked-levels": "node --import tsx scripts/generate-ranked-levels.ts --check",
+    "verify:backend": "node --env-file-if-exists=.env scripts/verify-backend.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/space-grotesk": "^0.4.1",
