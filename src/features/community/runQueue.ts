@@ -56,13 +56,31 @@ async function uploadRuns(user: string): Promise<SyncResult> {
     const pending = await exclusive(() => getPendingRuns(user));
     const run = pending[0];
     if (!run) return { uploaded, pending: 0, error: null };
-    const { data: { session } } = await client.auth.getSession();
-    if (session?.user.id !== user) return { uploaded, pending: pending.length, error: 'Sign in to the same account to sync these runs.' };
+    const {
+      data: { session },
+    } = await client.auth.getSession();
+    if (session?.user.id !== user)
+      return {
+        uploaded,
+        pending: pending.length,
+        error: 'Sign in to the same account to sync these runs.',
+      };
     const { error } = await client.rpc('submit_run', {
-      p_id: run.id, p_level: run.level, p_revision: run.revision,
-      p_directions: run.directions, p_owner: user,
+      p_id: run.id,
+      p_level: run.level,
+      p_revision: run.revision,
+      p_directions: run.directions,
+      p_owner: user,
     });
-    if (error) return { uploaded, pending: pending.length, error: error.code === 'P0001' ? error.message : 'Could not upload right now. Your run is saved for retry.' };
+    if (error)
+      return {
+        uploaded,
+        pending: pending.length,
+        error:
+          error.code === 'P0001'
+            ? error.message
+            : 'Could not upload right now. Your run is saved for retry.',
+      };
     await discardRun(user, run.id);
     uploaded++;
   }

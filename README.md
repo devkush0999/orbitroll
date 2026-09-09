@@ -22,7 +22,7 @@ After installing the development build, `npm start` reconnects it to Metro. A co
 
 Browser preview: `npm run web`. CanvasKit is copied locally during installation, so Skia does not depend on a third-party CDN. Production web hosts must rewrite route requests (for example `/play/1`) to `index.html`.
 
-Fullscreen and the launch splash use `expo-navigation-bar` and `expo-splash-screen`. After pulling these changes, install dependencies and rebuild your iOS/Android development client (`npm run ios` / `npm run android`) to include the native modules and splash configuration.
+Fullscreen and the launch splash use `expo-navigation-bar` and `expo-splash-screen`; account sessions add `expo-secure-store` and `expo-crypto`. After pulling these changes, install dependencies and rebuild your iOS/Android development client (`npm run ios` / `npm run android`) to include the native modules and splash configuration.
 
 ## Play
 
@@ -51,7 +51,11 @@ New players see a three-step introduction with 3D trail artwork and a control pr
 
 The `/how-to-play` route is available from Home and Settings. Four practice lessons teach diagonal rolling, bidirectional lifts, gravity drops, and crystal collection/portals. Practice uses the production movement hook with `recordProgress: false` and independent lesson IDs, so it does not award stars or unlock levels. Players can use swipes or labeled buttons, resume after backgrounding, retry a miss, and start their next unfinished level. Scrolling is suspended only while touching the practice board, so vertical lift gestures can be used inside the scrollable guide. Additional cards explain fullscreen, safe landings, settings, and keyboard controls during real levels.
 
-Settings contains live theme previews, progress totals, fullscreen/control preferences, swipe distance, hints, haptics, reduced motion, a local-data explanation, and separately confirmed resets for preferences and journey records. Restoring preferences preserves records and tutorial completion. Preferences are validated when loading older saves; serial writes expose saving/error status with retry. No accounts, telemetry, cloud saves, or fabricated support links are added.
+Settings contains live theme previews, progress totals, fullscreen/control preferences, swipe distance, hints, haptics, reduced motion, a local-data explanation, and separately confirmed resets for preferences and journey records. Restoring preferences preserves records and tutorial completion. Preferences are validated when loading older saves; serial writes expose saving/error status with retry. Supabase accounts, ranked cloud saves, public player cards, invitations, and a role-protected admin panel are now available when configured. Read [online setup](supabase/README.md) before enabling them.
+
+## Online profiles, rankings, invitations, and admin
+
+See [Supabase setup and deployment](supabase/README.md) for migrations, email-code templates, environment variables, first-admin provisioning, database integration tests, and launch requirements. Web has a dedicated responsive landing page; native Home retains the next-trail experience. `/account`, `/leaderboard`, `/player/:username`, `/invite/:code`, `/admin`, and `/privacy` share the same typed Expo routes on all platforms.
 
 ## Structure
 
@@ -72,7 +76,10 @@ src/features/game/
   visibility.ts            Local path visibility and camera framing
   hooks/useGame.ts         Input locking, lifecycle, clock, animation coordination
   components/              Skia board, controls, Lottie completion overlay
-src/store/                 Redux Toolkit and validated local persistence
+src/features/community/    Auth, profiles, rankings, invites, admin, upload queue
+src/lib/                   Typed Supabase client and native secure session storage
+supabase/migrations/       RLS, replay validation, ranked level definitions
+src/store/                 Redux Toolkit and account-scoped local persistence
 src/features/settings/     Reusable setting rows and mission-control screen
 src/features/onboarding/   Three-step flight introduction
 src/features/guide/        Practice lessons and shared 3D lesson artwork
@@ -87,7 +94,7 @@ Lottie React Native renders completion particles. Native and web Skia entry poin
 
 Path tiles rise, scale, and fade into place with staggered Reanimated transitions. Camera translation and zoom animate one parent Skia group, preserving cached tile geometry. Visibility affects presentation only: collision surfaces stay intact. Reduced motion makes both reveal and camera changes immediate. For much longer trails, cull distant drawing nodes while retaining the complete collision model.
 
-Redux Toolkit owns durable progress and settings. Transient game state stays inside the game feature, with a pure rules engine and a synchronous input lock to prevent overlapping moves. Redux Saga is unnecessary for this local game; there are no complex remote workflows. Storage writes are serialized and saved data is validated before hydration.
+Redux Toolkit owns durable progress and settings. Transient game state stays inside the game feature, with a pure rules engine and a synchronous input lock to prevent overlapping moves. The community feature owns Supabase session lifecycle and a per-account persistent upload queue; network requests stay outside gameplay animation and storage locks. Storage writes are serialized and saved data is validated before hydration.
 
 ### Authoring vertical levels
 
@@ -124,8 +131,8 @@ Use separate Expo projects/app identifiers for staging and production if adding 
 ## Further engineering work
 
 - **Performance:** the native board is memoized, geometry scales to available space, animation runs outside React renders, and font/icon imports are scoped. For substantially larger levels, cache static Skia pictures and cull distant tiles. Profile before adding shaders or a continuous particle loop.
-- **Security:** there are no accounts, ads, analytics, remote assets, or requested sensitive permissions. AsyncStorage holds only non-sensitive game progress. If adding leaderboards, validate scores on a server; local progress is intentionally not cheat-proof. Keep secrets out of `EXPO_PUBLIC_*` variables.
-- **Dependency maintenance:** the initial npm audit reported 13 moderate advisories through Expo's `xcode → uuid` build tooling and Router's `query-string → decode-uri-component`. No high or critical issues were reported. The suggested forced fixes downgrade Expo/Router, so they were not applied. Track compatible upstream fixes before release.
+- **Security:** Supabase RLS restricts personal data and database functions validate ranked move sequences. Native sessions use SecureStore; AsyncStorage holds game progress and queued traces. Profiles start private and admin roles are provisioned only by the project owner. Replay validation does not prevent automated legal solutions. Keep secrets out of `EXPO_PUBLIC_*` variables.
+- **Dependency maintenance:** the latest npm audit reported 14 moderate advisories through Expo's `xcode → uuid` build tooling and Router's `query-string → decode-uri-component`. No high or critical issues were reported. The suggested forced fixes downgrade Expo/Router, so they were not applied. Track compatible upstream fixes before release.
 - **Code quality:** keep routes thin, add trails in `levels.ts`, and test new mechanics in the pure engine. Preserve typed route validation and version storage migrations when its schema changes.
 
 Compatibility references: [Expo SDK 57](https://expo.dev/sdk/57), [Reanimated setup](https://docs.expo.dev/versions/v57.0.0/sdk/reanimated/), [Skia setup](https://docs.expo.dev/versions/v57.0.0/sdk/skia/), [Skia web loading](https://shopify.github.io/react-native-skia/docs/getting-started/web/).

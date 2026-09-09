@@ -67,7 +67,10 @@ sql += fails(
 );
 sql += fails('select * from private.admin_users', 'permission denied');
 sql += fails('select public.admin_overview()', 'Admin access required');
-sql += fails(`select public.submit_run(gen_random_uuid(),1,1,${args(levels[0]!)},'${b}')`, 'Account changed');
+sql += fails(
+  `select public.submit_run(gen_random_uuid(),1,1,${args(levels[0]!)},'${b}')`,
+  'Account changed',
+);
 sql += fails(
   `select public.admin_moderate_player('bravo',true,'fake role')`,
   'Admin access required',
@@ -129,7 +132,10 @@ sql += check(
   '(select count(*) from public.runs)=18',
   'Idempotent retry duplicated a run',
 );
-sql += fails(`select public.submit_run('${runId(1)}',null,1,${args(levels[0]!)})`, 'Retry payload changed');
+sql += fails(
+  `select public.submit_run('${runId(1)}',null,1,${args(levels[0]!)})`,
+  'Retry payload changed',
+);
 sql += fails(
   `select public.submit_run('${runId(1)}',1,1,array['east'])`,
   'Retry payload changed',
@@ -222,16 +228,18 @@ sql += check(
 sql += `rollback;`;
 try {
   execFileSync(
-    '/opt/homebrew/bin/psql',
+    'psql',
     [
       '-X',
       '-q',
       '-h',
-      '/tmp/orbit-roll-community-pg',
+      '127.0.0.1',
       '-p',
       '55439',
       '-d',
       'postgres',
+      '-U',
+      process.env.ORBIT_TEST_DB_USER ?? process.env.USER ?? 'postgres',
       '-v',
       'ON_ERROR_STOP=1',
     ],

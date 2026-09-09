@@ -8,6 +8,17 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: orbit-test-only
+        ports: ['55439:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,5 +27,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npm run check:ranked-levels
+      - run: npm run test:database
+        env:
+          ORBIT_TEST_DB_USER: postgres
+          PGPASSWORD: orbit-test-only
       - run: npx expo install --check
       - run: npx expo export --platform all

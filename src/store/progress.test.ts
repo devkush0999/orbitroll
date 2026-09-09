@@ -44,3 +44,9 @@ test('untrusted preference values and invalid level records fall back safely', (
   assert.deepEqual(parseProgress('null'), initialState);
   assert.throws(() => parseProgress('{broken'));
 });
+test('restored ranked records preserve an unknown time instead of inventing a zero-second best', () => {
+  const data = parseProgress(
+    JSON.stringify({ results: { 1: { stars: 3, moves: 11, seconds: null } } }),
+  );
+  assert.deepEqual(data.results[1], { stars: 3, moves: 11, seconds: null });
+});

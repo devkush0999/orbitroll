@@ -28,7 +28,10 @@ const slice = createSlice({
       state.results[payload.id] = {
         stars: Math.max(old?.stars ?? 0, payload.stars),
         moves: Math.min(old?.moves ?? Infinity, payload.moves),
-        seconds: payload.seconds === null ? old?.seconds ?? null : Math.min(old?.seconds ?? Infinity, payload.seconds),
+        seconds:
+          payload.seconds === null
+            ? (old?.seconds ?? null)
+            : Math.min(old?.seconds ?? Infinity, payload.seconds),
       };
     },
     setTheme: (state, action: PayloadAction<SpaceTheme>) => {

@@ -41,7 +41,11 @@ export function parseProgress(raw: string): Progress {
       if (
         [record.stars, record.moves].every(
           (n) => typeof n === 'number' && Number.isFinite(n) && n >= 0,
-        ) && (record.seconds === null || (typeof record.seconds === 'number' && Number.isFinite(record.seconds) && record.seconds >= 0)) &&
+        ) &&
+        (record.seconds === null ||
+          (typeof record.seconds === 'number' &&
+            Number.isFinite(record.seconds) &&
+            record.seconds >= 0)) &&
         Number(record.stars) >= 1 &&
         Number(record.stars) <= 3 &&
         Number.isInteger(record.stars)
